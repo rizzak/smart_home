@@ -1,0 +1,815 @@
+[
+    {
+        "id": "dac7d7a2d5bd2024",
+        "type": "group",
+        "z": "7e66f02f73c438ef",
+        "name": "Мониторинг цен WB",
+        "style": {
+            "label": true
+        },
+        "nodes": [
+            "5448e571608b83b0",
+            "7091831266250fb3",
+            "382fa7c35577a4f7",
+            "795266170ced245e",
+            "6a4fb722b83de82a",
+            "b3450f38a2dea494",
+            "f097a2a03193b8f8",
+            "97082a75a8d27876",
+            "ab120140f18374ed",
+            "c4f6b8e42070b3b2",
+            "4ebbe0af62fc2953",
+            "e30db96f8c16a4bf",
+            "0297cf5bc3d8e013",
+            "43ac9b86030ee6b6",
+            "a80175bf0f91f57d",
+            "9f48dc4a9b43b7c0",
+            "cea54734152342e4",
+            "4f90ebeebc1c865a",
+            "31eff356f0974887",
+            "bda88440300956e9",
+            "108da60b683df6fc",
+            "8154640c6632378c",
+            "6e03f5596a431dc2"
+        ],
+        "x": 54,
+        "y": 2899,
+        "w": 1072,
+        "h": 262
+    },
+    {
+        "id": "cc359e46b1b91d5c",
+        "type": "subflow",
+        "name": "WB cur price",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 100,
+                "y": 180,
+                "wires": [
+                    {
+                        "id": "8c5c307b8b202126"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 1140,
+                "y": 180,
+                "wires": [
+                    {
+                        "id": "9a0db71e8d3022d7",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": [],
+        "meta": {},
+        "color": "#DDAA99"
+    },
+    {
+        "id": "78e53f73ffa99860",
+        "type": "http request",
+        "z": "cc359e46b1b91d5c",
+        "name": "",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "body",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 490,
+        "y": 160,
+        "wires": [
+            [
+                "8ebd8070bc3a25d1"
+            ]
+        ]
+    },
+    {
+        "id": "8ebd8070bc3a25d1",
+        "type": "change",
+        "z": "cc359e46b1b91d5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.data.products[0].id",
+                "pt": "msg",
+                "to": "payload.id",
+                "tot": "msg"
+            },
+            {
+                "t": "move",
+                "p": "payload.data.products[0].salePriceU",
+                "pt": "msg",
+                "to": "payload.price",
+                "tot": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "payload.state",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "payload.params",
+                "pt": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "payload.data",
+                "pt": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload.oldprice",
+                "pt": "msg",
+                "to": "payload.wb_oldprice",
+                "tot": "global"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 760,
+        "y": 160,
+        "wires": [
+            [
+                "9a0db71e8d3022d7"
+            ]
+        ]
+    },
+    {
+        "id": "9a0db71e8d3022d7",
+        "type": "calculator",
+        "z": "cc359e46b1b91d5c",
+        "name": "",
+        "inputMsgField": "payload.price",
+        "outputMsgField": "payload.price",
+        "operation": "div",
+        "constant": "100",
+        "round": true,
+        "decimals": 0,
+        "x": 1010,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8c5c307b8b202126",
+        "type": "change",
+        "z": "cc359e46b1b91d5c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "url",
+                "pt": "msg",
+                "to": "'https://card.wb.ru/cards/detail?spp=&regions=&pricemarginCoeff=1.0&reg=1&appType=1&emp=0&locale=ru&lang=ru&curr=rub&couponsGeo=&sppFixGeo=4&dest=&nm='&msg.payload.id",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "method",
+                "pt": "msg",
+                "to": "get",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.wb_oldprice",
+                "pt": "global",
+                "to": "payload.old_price",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 260,
+        "y": 160,
+        "wires": [
+            [
+                "78e53f73ffa99860"
+            ]
+        ]
+    },
+    {
+        "id": "5448e571608b83b0",
+        "type": "subflow:cc359e46b1b91d5c",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "x": 595,
+        "y": 2940,
+        "wires": [
+            [
+                "97082a75a8d27876"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "7091831266250fb3",
+        "type": "switch",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "cont",
+                "v": "ADD",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "DEL",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 190,
+        "y": 2960,
+        "wires": [
+            [
+                "795266170ced245e"
+            ],
+            [
+                "b3450f38a2dea494"
+            ]
+        ]
+    },
+    {
+        "id": "382fa7c35577a4f7",
+        "type": "file",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "filename": "'wb'&msg.payload.id",
+        "filenameType": "jsonata",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 505,
+        "y": 2940,
+        "wires": [
+            [
+                "5448e571608b83b0"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "795266170ced245e",
+        "type": "change",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "WB ADD ",
+                "fromt": "str",
+                "to": "",
+                "tot": "str"
+            },
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.id",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 360,
+        "y": 2940,
+        "wires": [
+            [
+                "382fa7c35577a4f7"
+            ]
+        ]
+    },
+    {
+        "id": "6a4fb722b83de82a",
+        "type": "file",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "filename": "'wb'&msg.payload",
+        "filenameType": "jsonata",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "delete",
+        "encoding": "none",
+        "x": 610,
+        "y": 2980,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b3450f38a2dea494",
+        "type": "change",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "WB DEL ",
+                "fromt": "str",
+                "to": "",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 380,
+        "y": 2980,
+        "wires": [
+            [
+                "6a4fb722b83de82a"
+            ]
+        ]
+    },
+    {
+        "id": "f097a2a03193b8f8",
+        "type": "file",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "filename": "'wb'&msg.payloadname",
+        "filenameType": "jsonata",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 1040,
+        "y": 2940,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "97082a75a8d27876",
+        "type": "change",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.id",
+                "pt": "msg",
+                "to": "payloadname",
+                "tot": "msg"
+            },
+            {
+                "t": "move",
+                "p": "payload.price",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 840,
+        "y": 2940,
+        "wires": [
+            [
+                "f097a2a03193b8f8"
+            ]
+        ]
+    },
+    {
+        "id": "ab120140f18374ed",
+        "type": "exec",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "command": "ls -tr | grep wb | head -1",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 250,
+        "y": 3040,
+        "wires": [
+            [
+                "c4f6b8e42070b3b2"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "c4f6b8e42070b3b2",
+        "type": "change",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payloadfilename",
+                "tot": "msg"
+            },
+            {
+                "t": "change",
+                "p": "payloadfilename",
+                "pt": "msg",
+                "from": "\\n",
+                "fromt": "re",
+                "to": "",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 425,
+        "y": 3040,
+        "wires": [
+            [
+                "4ebbe0af62fc2953"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "4ebbe0af62fc2953",
+        "type": "file in",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "filename": "payloadfilename",
+        "filenameType": "jsonata",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 505,
+        "y": 3040,
+        "wires": [
+            [
+                "e30db96f8c16a4bf"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "e30db96f8c16a4bf",
+        "type": "change",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.old_price",
+                "tot": "msg"
+            },
+            {
+                "t": "move",
+                "p": "payloadfilename",
+                "pt": "msg",
+                "to": "payload.id",
+                "tot": "msg"
+            },
+            {
+                "t": "change",
+                "p": "payload.old_price",
+                "pt": "msg",
+                "from": "\\n",
+                "fromt": "re",
+                "to": "",
+                "tot": "str"
+            },
+            {
+                "t": "change",
+                "p": "payload.id",
+                "pt": "msg",
+                "from": "wb",
+                "fromt": "str",
+                "to": "",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 585,
+        "y": 3040,
+        "wires": [
+            [
+                "0297cf5bc3d8e013"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "0297cf5bc3d8e013",
+        "type": "subflow:cc359e46b1b91d5c",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "x": 665,
+        "y": 3040,
+        "wires": [
+            [
+                "9f48dc4a9b43b7c0",
+                "4f90ebeebc1c865a"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "43ac9b86030ee6b6",
+        "type": "file",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "filename": "'wb'&msg.payloadname",
+        "filenameType": "jsonata",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 1040,
+        "y": 3040,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a80175bf0f91f57d",
+        "type": "change",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.id",
+                "pt": "msg",
+                "to": "payloadname",
+                "tot": "msg"
+            },
+            {
+                "t": "move",
+                "p": "payload.price",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 915,
+        "y": 3040,
+        "wires": [
+            [
+                "43ac9b86030ee6b6"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "9f48dc4a9b43b7c0",
+        "type": "delay",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 765,
+        "y": 3040,
+        "wires": [
+            [
+                "a80175bf0f91f57d"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "cea54734152342e4",
+        "type": "switch",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "property": "payload.price",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "lt",
+                "v": "payload.oldprice",
+                "vt": "msg"
+            },
+            {
+                "t": "gt",
+                "v": "payload.oldprice",
+                "vt": "msg"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 890,
+        "y": 3100,
+        "wires": [
+            [
+                "31eff356f0974887"
+            ],
+            [
+                "6e03f5596a431dc2"
+            ]
+        ]
+    },
+    {
+        "id": "4f90ebeebc1c865a",
+        "type": "function",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "func": "msg.payload.oldprice = Number(msg.payload.oldprice);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 765,
+        "y": 3100,
+        "wires": [
+            [
+                "cea54734152342e4"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "31eff356f0974887",
+        "type": "change",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "'УМЕНЬШИЛАСЬ цена на товар'&'\\n'&'https://www.wildberries.ru/catalog/'&msg.payload.id&'/detail.aspx'&'\\n'&'Было: '&msg.payload.oldprice&'\\n'&'Стало: '&msg.payload.price",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 995,
+        "y": 3080,
+        "wires": [
+            [
+                "bda88440300956e9"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "bda88440300956e9",
+        "type": "link out",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "link out 19",
+        "mode": "link",
+        "links": [
+            "6fbee41a08c1cbe1",
+            "f64899a1ce3451af"
+        ],
+        "x": 1085,
+        "y": 3100,
+        "wires": []
+    },
+    {
+        "id": "108da60b683df6fc",
+        "type": "link in",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "WB",
+        "links": [
+            "0e72c073a7c555ac"
+        ],
+        "x": 95,
+        "y": 2960,
+        "wires": [
+            [
+                "7091831266250fb3"
+            ]
+        ]
+    },
+    {
+        "id": "8154640c6632378c",
+        "type": "link in",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "link in 5",
+        "links": [
+            "d7f8c2bd.f19db"
+        ],
+        "x": 95,
+        "y": 3040,
+        "wires": [
+            [
+                "ab120140f18374ed"
+            ]
+        ]
+    },
+    {
+        "id": "6e03f5596a431dc2",
+        "type": "change",
+        "z": "7e66f02f73c438ef",
+        "g": "dac7d7a2d5bd2024",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "'УВЕЛИЧИЛАСЬ цена на товар'&'\\n'&'https://www.wildberries.ru/catalog/'&msg.payload.id&'/detail.aspx'&'\\n'&'Было: '&msg.payload.oldprice&'\\n'&'Стало: '&msg.payload.price",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 995,
+        "y": 3120,
+        "wires": [
+            [
+                "bda88440300956e9"
+            ]
+        ],
+        "l": false
+    }
+]
